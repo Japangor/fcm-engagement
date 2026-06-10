@@ -1,0 +1,69 @@
+name: FCM Engagement Push
+
+on:
+  schedule:
+    # Mon/Wed/Fri/Sun at 13:30 UTC (~19:00 IST)
+    - cron: "30 13 * * 1,3,5,0"
+  workflow_dispatch:
+    inputs:
+      category:
+        description: "Message category pool"
+        required: false
+        default: "general"
+        type: choice
+        options:
+          - general
+          - education_code
+          - education_exam
+          - finance
+          - utility
+      announcement:
+        description: "Use announcement pool"
+        required: false
+        default: false
+        type: boolean
+      dry_run:
+        description: "Dry run (no send)"
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: pip install -r requirements.txt
+
+      - name: Decode service accounts
+        env:
+          FCM_SA_CRICKET_B64: ${{ secrets.FCM_SA_CRICKET }}
+          FCM_SA_JAPANGOR_B64: ${{ secrets.FCM_SA_JAPANGOR }}
+        run: |
+          if [ -n "$FCM_SA_CRICKET_B64" ]; then
+            echo "$FCM_SA_CRICKET_B64" | base64 -d > /tmp/fcm_cricket.json
+            echo "FCM_SA_CRICKET=/tmp/fcm_cricket.json" >> "$GITHUB_ENV"
+          fi
+          if [ -n "$FCM_SA_JAPANGOR_B64" ]; then
+            echo "$FCM_SA_JAPANGOR_B64" | base64 -d > /tmp/fcm_japangor.json
+            echo "FCM_SA_JAPANGOR=/tmp/fcm_japangor.json" >> "$GITHUB_ENV"
+          fi
+
+      - name: Send engagement notifications
+        run: |
+          ARGS=""
+          if [ "${{ github.event.inputs.announcement }}" = "true" ]; then
+            ARGS="$ARGS --announcement"
+          elif [ -n "${{ github.event.inputs.category }}" ]; then
+            ARGS="$ARGS --category ${{ github.event.inputs.category }}"
+          fi
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            ARGS="$ARGS --dry-run"
+          fi
+          python3 fcm_engagement.py $ARGS

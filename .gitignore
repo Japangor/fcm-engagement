@@ -1,0 +1,10 @@
+# Never commit service account credentials
+*service_account*.json
+*-adminsdk*.json
+fcm_cricket.json
+fcm_japangor.json
+*.pem
+*.key
+__pycache__/
+*.pyc
+.env

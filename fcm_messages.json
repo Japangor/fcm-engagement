@@ -1,0 +1,104 @@
+{
+  "categories": {
+    "education_code": [
+      {
+        "title": "Keep your coding streak alive",
+        "body": "Open a quick lesson and practice one concept today — 5 minutes is enough to grow."
+      },
+      {
+        "title": "New drills waiting for you",
+        "body": "Try today's practice set and sharpen your skills before your next project."
+      },
+      {
+        "title": "Debug like a pro",
+        "body": "Stuck on a bug? Review the debugging module — small habits save hours."
+      },
+      {
+        "title": "Mini-project time",
+        "body": "Build something small today. Consistency beats cramming every time."
+      }
+    ],
+    "education_exam": [
+      {
+        "title": "Daily exam drill",
+        "body": "10 MCQs now can lift your score more than reading notes for an hour."
+      },
+      {
+        "title": "Speed + accuracy practice",
+        "body": "Open today's timed drill — train your brain for exam pressure."
+      },
+      {
+        "title": "PYQ revision reminder",
+        "body": "Previous-year questions repeat patterns. Practice one set today."
+      },
+      {
+        "title": "Formula recap",
+        "body": "Quick revision beats last-minute panic. Open your cheat-sheet module."
+      }
+    ],
+    "finance": [
+      {
+        "title": "Money tip of the day",
+        "body": "Small calculations today prevent costly mistakes tomorrow. Open the app."
+      },
+      {
+        "title": "Plan smarter",
+        "body": "Run one real scenario — loan, tax, or SIP — and see the numbers clearly."
+      },
+      {
+        "title": "FY planning check",
+        "body": "A 3-minute calculator session can clarify your next financial decision."
+      },
+      {
+        "title": "Worked example ready",
+        "body": "Learn from a real INR example — open the latest lesson module."
+      }
+    ],
+    "utility": [
+      {
+        "title": "Quick calc reminder",
+        "body": "Save time on everyday math — your calculator is one tap away."
+      },
+      {
+        "title": "Practice drill",
+        "body": "Sharpen mental math with today's short drill inside the app."
+      },
+      {
+        "title": "Pro tip inside",
+        "body": "Open the app for a shortcut you can use at work or school today."
+      },
+      {
+        "title": "Daily use case",
+        "body": "See how others use this tool in real shopping, travel, and budget scenarios."
+      }
+    ],
+    "general": [
+      {
+        "title": "You're on a roll",
+        "body": "Continue where you left off — your next lesson is ready."
+      },
+      {
+        "title": "Learn something new today",
+        "body": "Fresh content and quizzes are waiting. Open the app for 5 minutes."
+      },
+      {
+        "title": "Streak reminder",
+        "body": "Don't break the chain — a short session keeps momentum strong."
+      },
+      {
+        "title": "Quiz of the day",
+        "body": "Test what you remember with a quick quiz inside the app."
+      }
+    ]
+  },
+  "announcements": [
+    {
+      "title": "Content update",
+      "body": "We've expanded lessons with deeper examples and more practice MCQs. Explore now!"
+    },
+    {
+      "title": "More lessons inside",
+      "body": "New modules added — debugging, projects, and revision drills. Check them out."
+    }
+  ]
+}
