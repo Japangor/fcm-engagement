@@ -43,12 +43,18 @@ jobs:
 
       - name: Decode service accounts
         env:
-          FCM_SA_CRICKET_B64: ${{ secrets.FCM_SA_CRICKET }}
+          # CricAi devices live in the rail24-mobile Firebase project. Prefer the
+          # new FCM_SA_RAIL24_MOBILE secret; fall back to legacy FCM_SA_CRICKET.
+          FCM_SA_RAIL24_MOBILE_B64: ${{ secrets.FCM_SA_RAIL24_MOBILE }}
+          FCM_SA_CRICKET_LEGACY_B64: ${{ secrets.FCM_SA_CRICKET }}
           FCM_SA_JAPANGOR_B64: ${{ secrets.FCM_SA_JAPANGOR }}
         run: |
-          if [ -n "$FCM_SA_CRICKET_B64" ]; then
-            echo "$FCM_SA_CRICKET_B64" | base64 -d > /tmp/fcm_cricket.json
-            echo "FCM_SA_CRICKET=/tmp/fcm_cricket.json" >> "$GITHUB_ENV"
+          if [ -n "$FCM_SA_RAIL24_MOBILE_B64" ]; then
+            echo "$FCM_SA_RAIL24_MOBILE_B64" | base64 -d > /tmp/fcm_cricket.json
+            echo "FCM_SA_RAIL24_MOBILE=/tmp/fcm_cricket.json" >> "$GITHUB_ENV"
+          elif [ -n "$FCM_SA_CRICKET_LEGACY_B64" ]; then
+            echo "$FCM_SA_CRICKET_LEGACY_B64" | base64 -d > /tmp/fcm_cricket.json
+            echo "FCM_SA_RAIL24_MOBILE=/tmp/fcm_cricket.json" >> "$GITHUB_ENV"
           fi
           if [ -n "$FCM_SA_JAPANGOR_B64" ]; then
             echo "$FCM_SA_JAPANGOR_B64" | base64 -d > /tmp/fcm_japangor.json

@@ -10,8 +10,9 @@ Usage:
   python3 fcm_engagement.py --category education_exam
 
 Environment / secrets:
-  FCM_SA_CRICKET  path to cricket-c7b8f service account JSON (or --sa-cricket)
-  FCM_SA_JAPANGOR path to japangor service account JSON (or --sa-japangor)
+  FCM_SA_RAIL24_MOBILE  path to rail24-mobile service account JSON (or --sa-cricket)
+                        [legacy fallback: FCM_SA_CRICKET]
+  FCM_SA_JAPANGOR       path to japangor service account JSON (or --sa-japangor)
 
 A project is skipped (not an error) when its service account file is absent,
 so the workflow keeps working even if only one secret is configured.
@@ -37,6 +38,10 @@ HERE = Path(__file__).resolve().parent
 MESSAGES = HERE / "fcm_messages.json"
 SCOPES = ["https://www.googleapis.com/auth/firebase.messaging"]
 TOPIC = "all"
+# CricAi devices are registered in the rail24-mobile Firebase project, so the
+# cricket service account MUST belong to rail24-mobile (NOT cricket-c7b8f, which
+# is only used for Play Console / indexing tooling).
+EXPECTED_CRICKET_PROJECT = "rail24-mobile"
 
 
 def access_token(sa_path: Path) -> tuple[str, str]:
@@ -99,14 +104,21 @@ def send_push(sa_path: Path, title: str, body: str, *, dry_run: bool) -> bool:
     return False
 
 
-def _env_path(var: str) -> Path | None:
-    val = os.environ.get(var)
-    return Path(val) if val else None
+def _env_path(*vars: str) -> Path | None:
+    """First non-empty env var among `vars` -> Path, else None."""
+    for var in vars:
+        val = os.environ.get(var)
+        if val:
+            return Path(val)
+    return None
 
 
 def main() -> int:
     p = argparse.ArgumentParser(description="Engagement FCM broadcast (both projects).")
-    p.add_argument("--sa-cricket", type=Path, default=_env_path("FCM_SA_CRICKET"))
+    # Prefer the new rail24-mobile name; fall back to legacy FCM_SA_CRICKET.
+    p.add_argument("--sa-cricket", type=Path,
+                   default=_env_path("FCM_SA_RAIL24_MOBILE", "FCM_SA_CRICKET"),
+                   help="rail24-mobile FCM service account (env FCM_SA_RAIL24_MOBILE)")
     p.add_argument("--sa-japangor", type=Path, default=_env_path("FCM_SA_JAPANGOR"))
     p.add_argument("--category", choices=[
         "education_code", "education_exam", "finance", "utility", "general",
@@ -124,6 +136,20 @@ def main() -> int:
         title, body = pick_message(args.category, use_announcement=args.announcement)
 
     print(f"Message: {title!r} — {body!r}")
+
+    # Guard: the CricAi SA must be rail24-mobile, else pushes reach no devices.
+    try:
+        if args.sa_cricket and args.sa_cricket.exists():
+            proj = json.loads(args.sa_cricket.read_text()).get("project_id")
+            if proj and proj != EXPECTED_CRICKET_PROJECT:
+                print(
+                    f"WARNING: cricket SA project_id={proj!r} (expected "
+                    f"{EXPECTED_CRICKET_PROJECT!r}). CricAi devices are on "
+                    f"{EXPECTED_CRICKET_PROJECT!r}; pushes will not be delivered.",
+                    file=sys.stderr,
+                )
+    except Exception:
+        pass
 
     attempted = False
     ok_any = False
